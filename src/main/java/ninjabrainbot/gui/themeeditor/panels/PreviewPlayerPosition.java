@@ -4,10 +4,11 @@ import ninjabrainbot.model.datastate.common.IPlayerPosition;
 
 public class PreviewPlayerPosition implements IPlayerPosition {
 
-	private final double x, z;
+	private final double x, y, z;
 
-	public PreviewPlayerPosition(double x, double z) {
+	public PreviewPlayerPosition(double x, double y, double z) {
 		this.x = x;
+		this.y = y;
 		this.z = z;
 	}
 
@@ -24,6 +25,11 @@ public class PreviewPlayerPosition implements IPlayerPosition {
 	@Override
 	public double xInPlayerDimension() {
 		return x;
+	}
+	
+	@Override
+	public double yInPlayerDimension() {
+		return y;
 	}
 
 	@Override

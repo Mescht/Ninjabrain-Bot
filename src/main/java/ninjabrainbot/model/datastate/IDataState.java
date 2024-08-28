@@ -9,6 +9,8 @@ import ninjabrainbot.model.datastate.divine.DivineResult;
 import ninjabrainbot.model.datastate.divine.IDivineContext;
 import ninjabrainbot.model.datastate.endereye.IEnderEyeThrow;
 import ninjabrainbot.model.datastate.highprecision.IBoatDataState;
+import ninjabrainbot.model.datastate.homeportal.HomePortalResult;
+import ninjabrainbot.model.datastate.homeportal.IHomePortalContext;
 import ninjabrainbot.model.datastate.stronghold.ChunkPrediction;
 import ninjabrainbot.model.domainmodel.IDataComponent;
 import ninjabrainbot.model.domainmodel.IDomainModelComponent;
@@ -21,6 +23,8 @@ public interface IDataState {
 	IBoatDataState boatDataState();
 
 	IDivineContext getDivineContext();
+	
+	IHomePortalContext getHomePortalContext();
 
 	IListComponent<IEnderEyeThrow> getThrowList();
 
@@ -35,6 +39,8 @@ public interface IDataState {
 	IDomainModelComponent<BlindResult> blindResult();
 
 	IDomainModelComponent<DivineResult> divineResult();
+	
+	IDomainModelComponent<HomePortalResult> homePortalResult();
 
 	IDomainModelComponent<ResultType> resultType();
 

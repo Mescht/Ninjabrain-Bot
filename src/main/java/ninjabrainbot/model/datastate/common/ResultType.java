@@ -5,6 +5,6 @@ package ninjabrainbot.model.datastate.common;
  */
 public enum ResultType {
 
-	NONE, TRIANGULATION, FAILED, BLIND, DIVINE, ALL_ADVANCEMENTS
+	NONE, TRIANGULATION, FAILED, BLIND, DIVINE, ALL_ADVANCEMENTS, HOMEPORTAL
 
 }

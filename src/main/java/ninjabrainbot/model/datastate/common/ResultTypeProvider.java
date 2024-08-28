@@ -19,6 +19,8 @@ public class ResultTypeProvider implements IDisposable {
 	private final IDomainModelComponent<ICalculatorResult> calculatorResult;
 	private final IDomainModelComponent<IPlayerPosition> playerPosition;
 	private final IDomainModelComponent<Fossil> fossil;
+	private final IDomainModelComponent<Boolean> useHomePortal;
+	private final IDomainModelComponent<Boolean> blindModeToggled;
 
 	private final DisposeHandler disposeHandler = new DisposeHandler();
 
@@ -28,11 +30,15 @@ public class ResultTypeProvider implements IDisposable {
 		calculatorResult = dataState.calculatorResult();
 		playerPosition = dataState.playerPosition();
 		fossil = dataState.getDivineContext().fossil();
+		useHomePortal = dataState.getHomePortalContext().useHomePortalMode();
+		blindModeToggled = dataState.getHomePortalContext().blindModeToggled();
 
 		disposeHandler.add(allAdvancementsDataState.allAdvancementsModeEnabled().subscribeInternal(this::updateResultType));
 		disposeHandler.add(calculatorResult.subscribeInternal(this::updateResultType));
 		disposeHandler.add(playerPosition.subscribeInternal(this::updateResultType));
 		disposeHandler.add(fossil.subscribeInternal(this::updateResultType));
+		disposeHandler.add(useHomePortal.subscribeInternal(this::updateResultType));
+		disposeHandler.add(blindModeToggled.subscribeInternal(this::updateResultType));
 	}
 
 	public IDomainModelComponent<ResultType> resultType() {
@@ -49,8 +55,11 @@ public class ResultTypeProvider implements IDisposable {
 		if (calculatorResult.get() != null)
 			return ResultType.FAILED;
 
-		if (playerPosition.get() != null && playerPosition.get().isInNether())
+		if (playerPosition.get() != null && playerPosition.get().isInNether()) {
+			if (useHomePortal.get() && !blindModeToggled.get())
+				return ResultType.HOMEPORTAL;
 			return ResultType.BLIND;
+		}
 
 		if (fossil.get() != null)
 			return ResultType.DIVINE;

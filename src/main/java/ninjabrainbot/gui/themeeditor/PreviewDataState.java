@@ -15,6 +15,9 @@ import ninjabrainbot.model.datastate.divine.IDivineContext;
 import ninjabrainbot.model.datastate.endereye.IEnderEyeThrow;
 import ninjabrainbot.model.datastate.highprecision.BoatDataState;
 import ninjabrainbot.model.datastate.highprecision.IBoatDataState;
+import ninjabrainbot.model.datastate.homeportal.HomePortalContext;
+import ninjabrainbot.model.datastate.homeportal.HomePortalResult;
+import ninjabrainbot.model.datastate.homeportal.IHomePortalContext;
 import ninjabrainbot.model.datastate.stronghold.ChunkPrediction;
 import ninjabrainbot.model.domainmodel.DataComponent;
 import ninjabrainbot.model.domainmodel.IDataComponent;
@@ -37,6 +40,8 @@ public class PreviewDataState implements IDataState {
 	private final DataComponent<ChunkPrediction> topPrediction;
 	private final DataComponent<BlindResult> blindResult;
 	private final DataComponent<DivineResult> divineResult;
+	private final DataComponent<HomePortalResult> homePortalResult;
+	private final IHomePortalContext homePortalContext;
 
 	public PreviewDataState(ICalculatorResult result, List<IEnderEyeThrow> eyeThrows, Fossil f) {
 		this();
@@ -58,7 +63,9 @@ public class PreviewDataState implements IDataState {
 		topPrediction = new DataComponent<>(null);
 		blindResult = new DataComponent<>(null);
 		divineResult = new DataComponent<>(null);
-
+		homePortalResult = new DataComponent<>(null);
+		
+		homePortalContext = new HomePortalContext(null, false);
 		boatDataState = new BoatDataState(null);
 		allAdvancementsDataState = new PreviewAllAdvancementsDataState();
 	}
@@ -102,6 +109,11 @@ public class PreviewDataState implements IDataState {
 	public IDomainModelComponent<DivineResult> divineResult() {
 		return divineResult;
 	}
+	
+	@Override
+	public IDomainModelComponent<HomePortalResult> homePortalResult() {
+		return homePortalResult;
+	}
 
 	@Override
 	public IDomainModelComponent<ResultType> resultType() {
@@ -116,6 +128,11 @@ public class PreviewDataState implements IDataState {
 	@Override
 	public IBoatDataState boatDataState() {
 		return boatDataState;
+	}
+
+	@Override
+	public IHomePortalContext getHomePortalContext() {
+		return homePortalContext;
 	}
 
 }

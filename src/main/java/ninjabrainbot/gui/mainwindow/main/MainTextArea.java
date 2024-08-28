@@ -15,11 +15,12 @@ import ninjabrainbot.model.datastate.blind.BlindResult;
 import ninjabrainbot.model.datastate.calculator.ICalculatorResult;
 import ninjabrainbot.model.datastate.common.ResultType;
 import ninjabrainbot.model.datastate.divine.DivineResult;
+import ninjabrainbot.model.datastate.homeportal.HomePortalResult;
 import ninjabrainbot.model.input.IButtonInputHandler;
 
 public class MainTextArea extends ResizablePanel {
 
-	private final String BLIND = "BLIND", DIVINE = "DIVINE", TRIANGULATION = "TRI", TRIANGULATION_DETAILED = "DET", ALL_ADVANCEMENTS = "AA";
+	private final String BLIND = "BLIND", DIVINE = "DIVINE", TRIANGULATION = "TRI", TRIANGULATION_DETAILED = "DET", ALL_ADVANCEMENTS = "AA", HOMEPORTAL = "HOME";
 
 	private final NinjabrainBotPreferences preferences;
 
@@ -28,6 +29,7 @@ public class MainTextArea extends ResizablePanel {
 	final BasicTriangulationPanel basicTriangulation;
 	final DetailedTriangulationPanel detailedTriangulation;
 	final BlindPanel blind;
+	final HomePortalPanel homePortal;
 	final DivinePanel divine;
 	final AllAdvancementsPanel allAdvancements;
 
@@ -44,11 +46,13 @@ public class MainTextArea extends ResizablePanel {
 		basicTriangulation = new BasicTriangulationPanel(styleManager, preferences);
 		detailedTriangulation = new DetailedTriangulationPanel(styleManager, preferences);
 		blind = new BlindPanel(styleManager);
+		homePortal = new HomePortalPanel(styleManager);
 		divine = new DivinePanel(styleManager);
 		allAdvancements = new AllAdvancementsPanel(styleManager, buttonInputHandler, dataState.allAdvancementsDataState());
 		add(basicTriangulation, TRIANGULATION);
 		add(detailedTriangulation, TRIANGULATION_DETAILED);
 		add(blind, BLIND);
+		add(homePortal, HOMEPORTAL);
 		add(divine, DIVINE);
 		add(allAdvancements, ALL_ADVANCEMENTS);
 		setOpaque(false);
@@ -57,6 +61,7 @@ public class MainTextArea extends ResizablePanel {
 
 		setResult(dataState.calculatorResult().get());
 		setResult(dataState.blindResult().get());
+		setResult(dataState.homePortalResult().get());
 		setResult(dataState.divineResult().get());
 		updateResult();
 	}
@@ -69,6 +74,7 @@ public class MainTextArea extends ResizablePanel {
 		// Data state
 		disposeHandler.add(dataState.calculatorResult().subscribeEDT(this::setResult));
 		disposeHandler.add(dataState.blindResult().subscribeEDT(this::setResult));
+		disposeHandler.add(dataState.homePortalResult().subscribeEDT(this::setResult));
 		disposeHandler.add(dataState.divineResult().subscribeEDT(this::setResult));
 		disposeHandler.add(dataState.resultType().subscribeEDT(__ -> updateResult()));
 	}
@@ -107,6 +113,10 @@ public class MainTextArea extends ResizablePanel {
 				break;
 			case ALL_ADVANCEMENTS:
 				layout.show(this, ALL_ADVANCEMENTS);
+				break;
+			case HOMEPORTAL:
+				layout.show(this, HOMEPORTAL);
+				break;
 		}
 		revalidate();
 		whenSizeModified.notifySubscribers(this);
@@ -124,6 +134,11 @@ public class MainTextArea extends ResizablePanel {
 	private void setResult(BlindResult result) {
 		blind.setResult(result);
 		blind.updateColors();
+	}
+	
+	private void setResult(HomePortalResult result) {
+		homePortal.setResult(result);
+		homePortal.updateColors();
 	}
 
 	private void setResult(DivineResult result) {

@@ -13,6 +13,9 @@ import ninjabrainbot.model.datastate.divine.DivineResult;
 import ninjabrainbot.model.datastate.divine.Fossil;
 import ninjabrainbot.model.datastate.divine.IDivineContext;
 import ninjabrainbot.model.datastate.endereye.IEnderEyeThrow;
+import ninjabrainbot.model.datastate.homeportal.HomePortalPosition;
+import ninjabrainbot.model.datastate.homeportal.HomePortalResult;
+import ninjabrainbot.model.datastate.homeportal.IHomePortalContext;
 import ninjabrainbot.model.datastate.statistics.Posterior;
 import ninjabrainbot.model.datastate.statistics.Prior;
 import ninjabrainbot.model.datastate.stronghold.Chunk;
@@ -29,12 +32,16 @@ public class Calculator implements ICalculator {
 	private final boolean useAdvancedStatistics;
 	private final McVersion mcVersion;
 	private final StandardDeviationSettings standardDeviationSettings;
+	
+	//private HomePortalPosition homePortalPosition;
+	//private IDataComponent<HomePortalPosition> homePortalPosition;
 
 	public Calculator(CalculatorSettings calculatorSettings, StandardDeviationSettings standardDeviationSettings) {
 		numberOfReturnedPredictions = calculatorSettings.numberOfReturnedPredictions;
 		useAdvancedStatistics = calculatorSettings.useAdvancedStatistics;
 		mcVersion = calculatorSettings.mcVersion;
 		this.standardDeviationSettings = standardDeviationSettings;
+		//homePortalPosition = new DataComponent<HomePortalPosition>(, null);
 	}
 
 	@Override
@@ -93,6 +100,28 @@ public class Calculator implements ICalculator {
 		optZ *= optDist / optR;
 		Logger.log("Time to calculate blind features: " + (System.currentTimeMillis() - t0) / 1000f + " seconds.");
 		return new BlindResult(b.x, b.z, probability, distanceThreshold, avgDist * 16, avgDistDerivative, ninetiethPercentileDerivative, Coords.getPhi(optX - b.x, optZ - b.z), Coords.dist(optX, optZ, b.x, b.z), optHighrollProb);
+	}
+	
+	@Override
+	public HomePortalResult homePortal(IPlayerPosition pos, IHomePortalContext homePortalContext) {
+		
+		HomePortalPosition home = homePortalContext.getPosition();
+		
+		if(home != null) {
+			double dist = Coords.dist(home.x, home.z, pos.xInPlayerDimension(), pos.zInPlayerDimension());
+			double angle = Coords.getPhi(home.x - pos.xInPlayerDimension(), home.z - pos.zInPlayerDimension());
+			double angleDiff = (angle * 180 / Math.PI - pos.horizontalAngle()) % 360;
+			if (angleDiff > 180)
+				angleDiff -= 360;
+			if (angleDiff < -180)
+				angleDiff += 360;
+			double heightDiff = home.y - pos.yInPlayerDimension();
+			return new HomePortalResult(home.x, home.y, home.z, dist, angle, angleDiff, heightDiff);
+		} else {
+			home = new HomePortalPosition(pos);
+			homePortalContext.setPosition(home);
+			return new HomePortalResult(pos.xInPlayerDimension(), pos.yInPlayerDimension(), pos.zInPlayerDimension());
+		}
 	}
 
 	@Override

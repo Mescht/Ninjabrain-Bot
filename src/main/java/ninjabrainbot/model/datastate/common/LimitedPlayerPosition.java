@@ -32,6 +32,11 @@ public class LimitedPlayerPosition implements IPlayerPosition {
 	public double xInPlayerDimension() {
 		return x;
 	}
+	
+	@Override
+	public double yInPlayerDimension() {
+		return 0;
+	}
 
 	@Override
 	public double zInPlayerDimension() {

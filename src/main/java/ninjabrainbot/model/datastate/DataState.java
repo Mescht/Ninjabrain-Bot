@@ -17,6 +17,9 @@ import ninjabrainbot.model.datastate.divine.IDivineContext;
 import ninjabrainbot.model.datastate.endereye.IEnderEyeThrow;
 import ninjabrainbot.model.datastate.highprecision.BoatDataState;
 import ninjabrainbot.model.datastate.highprecision.IBoatDataState;
+import ninjabrainbot.model.datastate.homeportal.HomePortalContext;
+import ninjabrainbot.model.datastate.homeportal.HomePortalResult;
+import ninjabrainbot.model.datastate.homeportal.IHomePortalContext;
 import ninjabrainbot.model.datastate.stronghold.ChunkPrediction;
 import ninjabrainbot.model.domainmodel.DataComponent;
 import ninjabrainbot.model.domainmodel.IDataComponent;
@@ -34,6 +37,7 @@ public class DataState implements IDataState, IDisposable {
 	private final DataComponent<Boolean> locked;
 
 	private final DivineContext divineContext;
+	private final HomePortalContext homePortalContext;
 	private final ListComponent<IEnderEyeThrow> throwSet;
 	private final DataComponent<IPlayerPosition> playerPosition;
 
@@ -43,16 +47,17 @@ public class DataState implements IDataState, IDisposable {
 	private final DisposeHandler disposeHandler = new DisposeHandler();
 
 	public DataState(IDomainModel domainModel, IEnvironmentState environmentState) {
-		this(domainModel, environmentState, DefaultBoatType.GRAY);
+		this(domainModel, environmentState, DefaultBoatType.GRAY, false);
 	}
 
-	public DataState(IDomainModel domainModel, IEnvironmentState environmentState, DefaultBoatType defaultBoatType) {
+	public DataState(IDomainModel domainModel, IEnvironmentState environmentState, DefaultBoatType defaultBoatType, boolean useHomePortalMode) {
 		divineContext = disposeHandler.add(new DivineContext(domainModel));
+		homePortalContext = disposeHandler.add(new HomePortalContext(domainModel, useHomePortalMode));
 		throwSet = new ListComponent<>(domainModel, 10);
 		playerPosition = new DataComponent<>(domainModel);
 		locked = new DataComponent<>(domainModel, false);
 
-		calculatorManager = disposeHandler.add(new CalculatorManager(domainModel, environmentState, throwSet, playerPosition, divineContext));
+		calculatorManager = disposeHandler.add(new CalculatorManager(domainModel, environmentState, throwSet, playerPosition, divineContext, homePortalContext));
 		allAdvancementsDataState = disposeHandler.add(new AllAdvancementsDataState(calculatorManager.topPrediction(), domainModel, environmentState));
 		boatDataState = new BoatDataState(domainModel, defaultBoatType);
 
@@ -103,6 +108,11 @@ public class DataState implements IDataState, IDisposable {
 	public IDomainModelComponent<DivineResult> divineResult() {
 		return calculatorManager.divineResult();
 	}
+	
+	@Override
+	public IDomainModelComponent<HomePortalResult> homePortalResult() {
+		return calculatorManager.homePortalResult();
+	}
 
 	@Override
 	public IDomainModelComponent<ResultType> resultType() {
@@ -119,4 +129,9 @@ public class DataState implements IDataState, IDisposable {
 		disposeHandler.dispose();
 	}
 
+	@Override
+	public IHomePortalContext getHomePortalContext() {
+		return homePortalContext;
+	}
+	
 }

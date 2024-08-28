@@ -6,6 +6,8 @@ import ninjabrainbot.model.datastate.common.IPlayerPosition;
 import ninjabrainbot.model.datastate.divine.DivineResult;
 import ninjabrainbot.model.datastate.divine.IDivineContext;
 import ninjabrainbot.model.datastate.endereye.IEnderEyeThrow;
+import ninjabrainbot.model.datastate.homeportal.HomePortalResult;
+import ninjabrainbot.model.datastate.homeportal.IHomePortalContext;
 import ninjabrainbot.event.IObservable;
 import ninjabrainbot.event.IReadOnlyList;
 
@@ -16,5 +18,8 @@ public interface ICalculator {
 	BlindResult blind(BlindPosition b, IDivineContext divineContext);
 
 	DivineResult divine(IDivineContext divineContext);
-
+	
+	//HomePortalResult homePortal(HomePortalPosition h);
+	HomePortalResult homePortal(IPlayerPosition pos, IHomePortalContext homePortalContext);
+	
 }

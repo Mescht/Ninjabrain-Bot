@@ -24,6 +24,7 @@ public class NinjabrainBotPreferences {
 	public final HotkeyPreference hotkeyAltStd;
 	public final HotkeyPreference hotkeyLock;
 	public final HotkeyPreference hotkeyToggleAllAdvancementsMode;
+	public final HotkeyPreference hotkeyHomePortal;
 	public final FloatPreference sensitivityManual;
 	public final FloatPreference sigma;
 	public final FloatPreference sigmaAlt;
@@ -56,6 +57,7 @@ public class NinjabrainBotPreferences {
 	public final BooleanPreference informationDirectionHelpEnabled;
 	public final BooleanPreference informationCombinedCertaintyEnabled;
 	public final BooleanPreference informationPortalLinkingEnabled;
+	public final BooleanPreference useHomePortalMode;
 	public final StringPreference customThemesString;
 	public final StringPreference customThemesNames;
 	public final StringPreference language;
@@ -66,6 +68,7 @@ public class NinjabrainBotPreferences {
 	public final MultipleChoicePreference<AllAdvancementsToggleType> allAdvancementsToggleType;
 	public final MultipleChoicePreference<DefaultBoatType> defaultBoatType;
 	public final MultipleChoicePreference<AngleAdjustmentType> angleAdjustmentType;
+
 
 	public NinjabrainBotPreferences(IPreferenceSource source) {
 		this.source = source;
@@ -86,6 +89,7 @@ public class NinjabrainBotPreferences {
 		hotkeyBoat = new HotkeyPreference("hotkey_boat", source);
 		hotkeyMod360 = new HotkeyPreference("hotkey_mod_360", source);
 		hotkeyToggleAllAdvancementsMode = new HotkeyPreference("hotkey_toggle_aa_mode", source);
+		hotkeyHomePortal = new HotkeyPreference("hotkey_home_portal", source);
 		// Float
 		sensitivityManual = new FloatPreference("sensitivity_manual", 0.4341732f, 0f, 1f, source);
 		sigma = new FloatPreference("sigma", 0.1f, 0.001f, 1f, source);
@@ -121,6 +125,7 @@ public class NinjabrainBotPreferences {
 		informationDirectionHelpEnabled = new BooleanPreference("direction_help_enabled", false, source);
 		informationCombinedCertaintyEnabled = new BooleanPreference("combined_offset_information_enabled", true, source);
 		informationPortalLinkingEnabled = new BooleanPreference("portal_linking_warning_enabled", true, source);
+		useHomePortalMode = new BooleanPreference("use_home_portal_mode", false, source);
 		// String
 		customThemesString = new StringPreference("custom_themes", "", source);
 		customThemesNames = new StringPreference("custom_themes_names", "", source);

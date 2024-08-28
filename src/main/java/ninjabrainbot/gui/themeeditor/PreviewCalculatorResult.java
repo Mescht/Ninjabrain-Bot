@@ -18,7 +18,7 @@ public class PreviewCalculatorResult implements ICalculatorResult {
 	final List<Chunk> chunks = new ArrayList<>();
 
 	public PreviewCalculatorResult(McVersion version) {
-		IObservable<IPlayerPosition> playerPosition = new ObservableField<>(new PreviewPlayerPosition(0, 1950));
+		IObservable<IPlayerPosition> playerPosition = new ObservableField<>(new PreviewPlayerPosition(0, 60, 1950));
 		predictions.add(createPrediction(-2, 109, 1, playerPosition, version));
 		predictions.add(createPrediction(-59, 92, 0.75, playerPosition, version));
 		predictions.add(createPrediction(-69, 89, 0.5, playerPosition, version));

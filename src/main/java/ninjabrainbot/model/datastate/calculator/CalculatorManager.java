@@ -10,6 +10,8 @@ import ninjabrainbot.model.datastate.common.IPlayerPosition;
 import ninjabrainbot.model.datastate.divine.DivineResult;
 import ninjabrainbot.model.datastate.divine.IDivineContext;
 import ninjabrainbot.model.datastate.endereye.IEnderEyeThrow;
+import ninjabrainbot.model.datastate.homeportal.HomePortalResult;
+import ninjabrainbot.model.datastate.homeportal.IHomePortalContext;
 import ninjabrainbot.model.datastate.stronghold.ChunkPrediction;
 import ninjabrainbot.model.datastate.stronghold.TopPredictionProvider;
 import ninjabrainbot.model.domainmodel.IDataComponent;
@@ -26,16 +28,19 @@ public class CalculatorManager implements ICalculatorManager, IDisposable {
 	private final IObservableList<IEnderEyeThrow> throwSet;
 	private final IObservable<IPlayerPosition> playerPosition;
 	private final IDivineContext divineContext;
+	private final IHomePortalContext homePortalContext;
 
 	private final InferredComponent<ICalculatorResult> calculatorResult;
 	private final InferredComponent<BlindResult> blindResult;
 	private final InferredComponent<DivineResult> divineResult;
+	private final InferredComponent<HomePortalResult> homePortalResult;
 
 	private final TopPredictionProvider topPredictionProvider;
 
 	private final DisposeHandler disposeHandler = new DisposeHandler();
 
-	public CalculatorManager(IDomainModel domainModel, IEnvironmentState environmentState, IListComponent<IEnderEyeThrow> throwSet, IDataComponent<IPlayerPosition> playerPosition, IDivineContext divineContext) {
+	public CalculatorManager(IDomainModel domainModel, IEnvironmentState environmentState, IListComponent<IEnderEyeThrow> throwSet, IDataComponent<IPlayerPosition> playerPosition, IDivineContext divineContext, IHomePortalContext homePortalContext) {
+		this.homePortalContext = homePortalContext;
 		this.calculator = environmentState.calculator().get();
 		this.throwSet = throwSet;
 		this.playerPosition = playerPosition;
@@ -44,6 +49,7 @@ public class CalculatorManager implements ICalculatorManager, IDisposable {
 		calculatorResult = new InferredComponent<>(domainModel);
 		blindResult = new InferredComponent<>(domainModel);
 		divineResult = new InferredComponent<>(domainModel);
+		homePortalResult = new InferredComponent<>(domainModel);
 
 		disposeHandler.add(environmentState.calculator().subscribeInternal(this::setCalculator));
 		disposeHandler.add(throwSet.subscribeInternal(this::onThrowSetModified));
@@ -61,6 +67,7 @@ public class CalculatorManager implements ICalculatorManager, IDisposable {
 	private void onPlayerPositionChanged() {
 		updateBlindResult();
 		updateDivineResult();
+		updateHomePortalResult();
 	}
 
 	private void onFossilChanged() {
@@ -89,6 +96,14 @@ public class CalculatorManager implements ICalculatorManager, IDisposable {
 		}
 		divineResult.set(calculator.divine(divineContext));
 	}
+	
+	private void updateHomePortalResult() {
+		if (throwSet.get().size() > 0 || playerPosition.get() == null || !playerPosition.get().isInNether()) {
+			homePortalResult.set(null);
+			return;
+		}
+		homePortalResult.set(calculator.homePortal(playerPosition.get(), homePortalContext));
+	}
 
 	private void setCalculator(ICalculator calculator) {
 		this.calculator = calculator;
@@ -115,6 +130,11 @@ public class CalculatorManager implements ICalculatorManager, IDisposable {
 	@Override
 	public IDomainModelComponent<DivineResult> divineResult() {
 		return divineResult;
+	}
+	
+	@Override
+	public IDomainModelComponent<HomePortalResult> homePortalResult() {
+		return homePortalResult;
 	}
 
 	@Override

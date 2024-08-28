@@ -13,6 +13,9 @@ import ninjabrainbot.model.actions.endereye.ChangeLastAngleAction;
 import ninjabrainbot.model.actions.endereye.ToggleAltStdOnLastThrowAction;
 import ninjabrainbot.model.datastate.IDataState;
 import ninjabrainbot.model.datastate.highprecision.BoatState;
+import ninjabrainbot.model.datastate.homeportal.HomePortalContext;
+import ninjabrainbot.model.datastate.homeportal.IHomePortalContext;
+import ninjabrainbot.model.datastate.homeportal.ToggleBlindModeAction;
 import ninjabrainbot.model.domainmodel.IDomainModel;
 
 public class HotkeyInputHandler implements IDisposable {
@@ -40,6 +43,7 @@ public class HotkeyInputHandler implements IDisposable {
 		disposeHandler.add(preferences.hotkeyMod360.whenTriggered().subscribe(this::toggleMod360IndicatorIfNotLocked));
 		disposeHandler.add(preferences.hotkeyLock.whenTriggered().subscribe(__ -> actionExecutor.executeImmediately(new ToggleLockedAction(dataState))));
 		disposeHandler.add(preferences.usePreciseAngle.whenModified().subscribe(this::resetBoatState));
+		disposeHandler.add(preferences.hotkeyHomePortal.whenTriggered().subscribe(this::toggleHomePortalMode));
 	}
 
 	private void resetIfNotLocked() {
@@ -85,6 +89,13 @@ public class HotkeyInputHandler implements IDisposable {
 	private void resetBoatState() {
 		if (!preferences.usePreciseAngle.get())
 			actionExecutor.executeImmediately(new ResetBoatStateAction(dataState));
+	}
+	
+	private void toggleHomePortalMode() {
+		if (preferences.useHomePortalMode.get()) {
+			IHomePortalContext hpc = dataState.getHomePortalContext();
+			actionExecutor.executeImmediately(new ToggleBlindModeAction(hpc, !hpc.blindModeToggled().get()));	
+		}
 	}
 
 	@Override
