@@ -25,6 +25,7 @@ import ninjabrainbot.model.environmentstate.StandardDeviationSettings;
 import ninjabrainbot.util.Coords;
 import ninjabrainbot.util.Logger;
 import ninjabrainbot.util.Pair;
+import sun.security.ec.point.ExtendedHomogeneousPoint.Immutable;
 
 public class Calculator implements ICalculator {
 
@@ -32,16 +33,12 @@ public class Calculator implements ICalculator {
 	private final boolean useAdvancedStatistics;
 	private final McVersion mcVersion;
 	private final StandardDeviationSettings standardDeviationSettings;
-	
-	//private HomePortalPosition homePortalPosition;
-	//private IDataComponent<HomePortalPosition> homePortalPosition;
 
 	public Calculator(CalculatorSettings calculatorSettings, StandardDeviationSettings standardDeviationSettings) {
 		numberOfReturnedPredictions = calculatorSettings.numberOfReturnedPredictions;
 		useAdvancedStatistics = calculatorSettings.useAdvancedStatistics;
 		mcVersion = calculatorSettings.mcVersion;
 		this.standardDeviationSettings = standardDeviationSettings;
-		//homePortalPosition = new DataComponent<HomePortalPosition>(, null);
 	}
 
 	@Override
@@ -104,24 +101,24 @@ public class Calculator implements ICalculator {
 	
 	@Override
 	public HomePortalResult homePortal(IPlayerPosition pos, IHomePortalContext homePortalContext) {
+	
+		HomePortalPosition homePortalPosition = homePortalContext.position().get();
 		
-		HomePortalPosition home = homePortalContext.getPosition();
-		
-		if(home != null) {
-			double dist = Coords.dist(home.x, home.z, pos.xInPlayerDimension(), pos.zInPlayerDimension());
-			double angle = Coords.getPhi(home.x - pos.xInPlayerDimension(), home.z - pos.zInPlayerDimension());
-			double angleDiff = (angle * 180 / Math.PI - pos.horizontalAngle()) % 360;
-			if (angleDiff > 180)
-				angleDiff -= 360;
-			if (angleDiff < -180)
-				angleDiff += 360;
-			double heightDiff = home.y - pos.yInPlayerDimension();
-			return new HomePortalResult(home.x, home.y, home.z, dist, angle, angleDiff, heightDiff);
-		} else {
-			home = new HomePortalPosition(pos);
-			homePortalContext.setPosition(home);
-			return new HomePortalResult(pos.xInPlayerDimension(), pos.yInPlayerDimension(), pos.zInPlayerDimension());
+		if (homePortalPosition == null) {
+			homePortalPosition = new HomePortalPosition(pos);
+			homePortalContext.position().set(homePortalPosition);
 		}
+		
+		double dist = Coords.dist(homePortalPosition.x, homePortalPosition.z, pos.xInPlayerDimension(), pos.zInPlayerDimension());
+		double angle = Coords.getPhi(homePortalPosition.x - pos.xInPlayerDimension(), homePortalPosition.z - pos.zInPlayerDimension());
+		double angleDiff = (angle * 180 / Math.PI - pos.horizontalAngle()) % 360;
+		if (angleDiff > 180)
+			angleDiff -= 360;
+		if (angleDiff < -180)
+			angleDiff += 360;
+		double heightDiff = homePortalPosition.y - pos.yInPlayerDimension();
+		
+		return new HomePortalResult(homePortalPosition.x, homePortalPosition.y, homePortalPosition.z, dist, angle, angleDiff, heightDiff);
 	}
 
 	@Override

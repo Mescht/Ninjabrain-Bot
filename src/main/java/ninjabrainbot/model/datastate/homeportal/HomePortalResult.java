@@ -6,10 +6,9 @@ public class HomePortalResult {
 	public final double angle;
 	public final double distance;
 	public final double angleDiff;
-	public boolean showDirection;
 	public final double heightDiff;
 
-	public HomePortalResult(double x, double y, double z, double distance, double angle, double angleDiff, double heightDiff, boolean showDirection) {
+	public HomePortalResult(double x, double y, double z, double distance, double angle, double angleDiff, double heightDiff) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -17,15 +16,6 @@ public class HomePortalResult {
 		this.distance = distance;
 		this.angleDiff = angleDiff;
 		this.heightDiff = heightDiff;
-		this.showDirection = showDirection;
-	}
-	
-	public HomePortalResult(double x, double y, double z, double distance, double angle, double angleDiff, double heightDiff) {
-		this(x, y, z, distance, angle, angleDiff, heightDiff, true);
-	}
-
-	public HomePortalResult(double x, double y, double z) {
-		this(x, y, z, 0, 0, 0, 0, false);
 	}
 
 	public String getFormatedAngleDiff() {
@@ -47,5 +37,9 @@ public class HomePortalResult {
 
 	public float getHeightDiffColor() {
 		return (float)(1 - Math.abs(heightDiff)/30);
+	}
+
+	public boolean showDirection() {
+		return distance == 0 && heightDiff == 0;
 	}
 }

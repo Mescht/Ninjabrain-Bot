@@ -20,21 +20,15 @@ public class HomePortalContext implements IHomePortalContext, IDisposable{
 		this.useHomePortalMode = new DataComponent<>(null, useHomePortal);
 		blindModeToggled = new DataComponent<>(domainModel, false);
 	}
-
-	@Override
-	public IDataComponent<HomePortalPosition> position() {
-		return position;
-	}
 	
 	@Override
-	public void dispose() {
-		disposeHandler.dispose();
-	}
-
-
-	@Override
-	public HomePortalPosition getPosition() {
-		return position.get();
+	public IDataComponent<HomePortalPosition> position() {
+		if (position.get() != null)
+			System.out.println(String.format("Position returned as %f, %f, %f", position.get().x, position.get().y, position.get().z));
+		else
+			System.out.println("Position returned as null");
+		
+		return position;
 	}
 	
 	@Override
@@ -47,15 +41,14 @@ public class HomePortalContext implements IHomePortalContext, IDisposable{
 		return blindModeToggled;
 	}
 
-
-	@Override
-	public void setPosition(HomePortalPosition pos) {
-		position.set(pos);
-	}
-
 	@Override
 	public void setHomePortalMode(boolean b) {
 		useHomePortalMode.set(b);
 	}
 
+	@Override
+	public void dispose() {
+		disposeHandler.dispose();
+	}
+	
 }

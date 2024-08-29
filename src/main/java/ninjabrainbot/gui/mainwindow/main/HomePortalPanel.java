@@ -48,21 +48,26 @@ class HomePortalPanel extends ThemedPanel {
 	}
 
 	public void setResult(HomePortalResult result) {
+		
 		if (result == null) {
 			posLabel.setText("");
-			distanceLabel.clear();
-			heightLabel.clear();
 			return;
 		}
+		
 		posLabel.setText(I18n.get("homeportal.position_text"), I18n.get("homeportal.position_values", result.x, result.y, result.z));
 		spacerLabel.setText(" ");
-		if(result.showDirection) {
-			distanceLabel.setText(I18n.get("homeportal.distance", (int)result.distance, (float)(result.angle * 180.0 / Math.PI)));
-			distanceLabel.setColoredText(result.getFormatedAngleDiff(), result.getAngleDiffColor());
-			
-			heightLabel.setText(I18n.get("homeportal.height_text"));
-			heightLabel.setColoredText(I18n.get("homeportal.height_value", (int)result.getHeightDiff(), result.getAboveBelow()), result.getHeightDiffColor());
+		
+		if(result.showDirection()) {
+			heightLabel.clear();
+			distanceLabel.clear();
+			return;
 		}
+		
+		distanceLabel.setText(I18n.get("homeportal.distance", (int)result.distance, (float)(result.angle * 180.0 / Math.PI)));
+		distanceLabel.setColoredText(result.getFormatedAngleDiff(), result.getAngleDiffColor());
+		
+		heightLabel.setText(I18n.get("homeportal.height_text"));
+		heightLabel.setColoredText(I18n.get("homeportal.height_value", (int)result.getHeightDiff(), result.getAboveBelow()), result.getHeightDiffColor());
 	}
 
 	@Override

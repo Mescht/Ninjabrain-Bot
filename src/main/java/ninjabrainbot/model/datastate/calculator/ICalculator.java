@@ -19,7 +19,6 @@ public interface ICalculator {
 
 	DivineResult divine(IDivineContext divineContext);
 	
-	//HomePortalResult homePortal(HomePortalPosition h);
 	HomePortalResult homePortal(IPlayerPosition pos, IHomePortalContext homePortalContext);
 	
 }
